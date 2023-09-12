@@ -66,13 +66,20 @@ def segment_chemical_structures_from_file(
         images = [np.array(image) for image in images]
     else:
         images = [cv2.imread(file_path)]
-    if len(images) > 1:
-        with Pool(4) as pool:
-            starmap_args = [(im, expand) for im in images]
-            segments = pool.starmap(segment_chemical_structures, starmap_args)
-            segments = [su for li in segments for su in li]
-    else:
-        segments = segment_chemical_structures(images[0])
+
+    # not use pool now 
+
+    # if len(images) > 1:
+    #     with Pool(4) as pool:
+    #         starmap_args = [(im, expand) for im in images]
+    #         segments = pool.starmap(segment_chemical_structures, starmap_args)
+    #         segments = [su for li in segments for su in li]
+    # else:
+    #     segments = segment_chemical_structures(images[0])
+    
+    segments=[]
+    for image in images:
+        segments += segment_chemical_structures(image)
     return segments
 
 
