@@ -37,6 +37,9 @@ class InferenceConfig(moldetect.MolDetectConfig):
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
 
+def func(a, b):
+    print(a+b)
+    return [a , b]
 
 def segment_chemical_structures_from_file(
     file_path: str,
@@ -69,18 +72,21 @@ def segment_chemical_structures_from_file(
 
     # not use pool now 
 
-    # if len(images) > 1:
-    #     with Pool(4) as pool:
-    #         starmap_args = [(im, expand) for im in images]
-    #         segments = pool.starmap(segment_chemical_structures, starmap_args)
-    #         segments = [su for li in segments for su in li]
-    # else:
-    #     segments = segment_chemical_structures(images[0])
-    
-    segments=[]
-    for image in images:
-        segments += segment_chemical_structures(image)
-    return segments
+    if len(images) > 1:
+        with Pool(1) as pool:
+            starmap_args = [(im, expand) for im in images]
+            segments = pool.starmap(segment_chemical_structures, starmap_args)
+            segments = [su for li in segments for su in li]
+            # args=[(1, 1), (2, 1), (3, 1),[1,1],[2,2],[3,3],[8,8]]
+            # L = pool.starmap(func,args )
+            # L = [su for li in L for su in li]
+    else:
+        segments, bboxes, shape = segment_chemical_structures(images[0])
+    # print(L)
+    # segments=[]
+    # for image in images:
+    #     segments += segment_chemical_structures(image)
+    return segments, bboxes, shape
 
 
 def segment_chemical_structures(
@@ -121,7 +127,7 @@ def segment_chemical_structures(
     if len(segments) > 0:
         segments, bboxes = sort_segments_bboxes(segments, bboxes)
 
-    return segments
+    return segments,bboxes, masks.shape
 
 
 def sort_segments_bboxes(
@@ -406,6 +412,9 @@ def main():
     # Save segments
     segment_dir = os.path.join(f"{input_path}_output", "segments")
     save_images(segments, segment_dir, os.path.split(input_path)[1][:-4])
+    # Save boxes
+    # segment_dir = os.path.join(f"{input_path}_output", "segments-box")
+    # save_images(bboxes, segment_dir, os.path.split(input_path)[1][:-4])
     print(f"The segmented images can be found in {segment_dir}")
 
 
