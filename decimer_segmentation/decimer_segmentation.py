@@ -72,21 +72,31 @@ def segment_chemical_structures_from_file(
 
     # not use pool now 
 
-    if len(images) > 1:
-        with Pool(1) as pool:
-            starmap_args = [(im, expand) for im in images]
-            segments = pool.starmap(segment_chemical_structures, starmap_args)
-            segments = [su for li in segments for su in li]
+    segments_list=[]
+    bboxes_list=[]
+    shape_list=[]
+    # if len(images) > 1:
+        # with Pool(1) as pool:
+        #     starmap_args = [(im, expand) for im in images]
+        #     segments = pool.starmap(segment_chemical_structures, starmap_args)
+        #     segments = [su for li in segments for su in li]
             # args=[(1, 1), (2, 1), (3, 1),[1,1],[2,2],[3,3],[8,8]]
             # L = pool.starmap(func,args )
             # L = [su for li in L for su in li]
-    else:
-        segments, bboxes, shape = segment_chemical_structures(images[0])
+    for image_i in images:
+        segments, bboxes, shape = segment_chemical_structures(image_i)
+        segments_list.append(segments)
+        bboxes_list.append(bboxes)
+        shape_list.append(shape)
+
+    # else:
+    #     segments, bboxes, shape = segment_chemical_structures(images[0])
     # print(L)
     # segments=[]
     # for image in images:
     #     segments += segment_chemical_structures(image)
-    return segments, bboxes, shape
+    # return segments, bboxes, shape
+    return segments_list, bboxes_list, shape_list
 
 
 def segment_chemical_structures(
