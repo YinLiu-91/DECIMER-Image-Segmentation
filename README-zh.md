@@ -1,0 +1,2 @@
+1. 在`/media/liu/SSD2/linux/ocsr/DECIMER-Image-Segmentation/decimer_segmentation/decimer_segmentation.py:66`处，卡住？
+2. /media/liu/SSD2/linux/ocsr/DECIMER-Image-Segmentation/decimer_segmentation/decimer_segmentation.py:70 这里卡住，多线程问题
